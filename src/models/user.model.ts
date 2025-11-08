@@ -1,25 +1,28 @@
 import mongoose,{ Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
-interface IUser extends Document {
-    firstName : string;
-    lastName : string;
+export interface IUser extends Document {
+    name : string;
+    username : string;
     email : string;
     password : string;
     createdAt : Date;
     updatedAt : Date;
+    passwordResetToken? : string;
+    resetTokenExpiry?: Date;
 }
 
 const userSchema = new Schema<IUser>({
-    firstName : {
+    name : {
         type : String,
         required : true,
         trim : true,
     },
-    lastName : {
+    username : {
         type : String,
         required : true,
         trim : true,
+        unique : true,
     },
     email : {
         type : String,
@@ -31,6 +34,12 @@ const userSchema = new Schema<IUser>({
         type : String,
         required : true,
     },
+    passwordResetToken : {
+        type : String,
+    },
+    resetTokenExpiry : {
+        type : Date,
+    }
 },{timestamps : true});
 
 //pre hook for hashing password

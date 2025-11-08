@@ -1,6 +1,6 @@
 import mongoose,{ Schema, Types, Document } from "mongoose";
 
-interface IUrl extends Document {
+export interface IUrl extends Document {
     userId : Types.ObjectId;
     shortCode : string;
     targetUrl : string;
@@ -14,6 +14,7 @@ const urlSchema = new Schema<IUrl>({
         type : String,
         required : true,
         unique : true,
+        index : true
     },
     targetUrl : {
         type : String,
@@ -23,11 +24,13 @@ const urlSchema = new Schema<IUrl>({
         type : Schema.Types.ObjectId,
         ref : "User",
         required : true,
+        index : true,
     },
     clicks : {
         type : Number,
         default : 0
     }
 },{timestamps : true});
+
 
 export const Url = mongoose.model("Url",urlSchema);
