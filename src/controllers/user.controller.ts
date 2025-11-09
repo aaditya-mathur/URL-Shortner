@@ -1,4 +1,4 @@
-import { signUpPostRequestBodySchema } from "../validations/request.validation";
+import { loginPostRequestBodySchema, signUpPostRequestBodySchema } from "../validations/request.validation";
 import { Request, Response } from "express";
 import { createUser, findExistingUser } from "../services/user.service.js";
 import { ApiError, ApiResponse, asyncHandler } from "../utils/utils.index.js";
@@ -30,3 +30,33 @@ export const signUp = asyncHandler( async (req : Request,res : Response)  => {
 
     return res.status(200).json(new ApiResponse(200,newUser,"user created successfully"));
 });
+
+
+export const login = asyncHandler( async (req : Request ,res : Response) => {
+    const validationResult = await loginPostRequestBodySchema.safeParseAsync(req.body);
+
+    if(!validationResult.success)
+    {
+        throw new ApiError(400,"validation failed",[validationResult.error.format()]);
+    }
+
+    const { username, email, password } = validationResult.data;
+
+    const existingUser = await findExistingUser(email as string,username as string );
+    
+    if(!existingUser)
+    {
+        throw new ApiError(400,"User does not exist make sure provided fields are correct");
+    }
+
+    const isPasswordValid = await existingUser.isPasswordCorrect(password);
+
+    if(!isPasswordValid)
+    {
+        throw new ApiError(401,"incorrect email or password");
+    }
+
+    const token =  existingUser.generateAccessToken();
+    
+    return res.status(200).json(new ApiResponse(200,{ token },"logged in successfully"));
+})

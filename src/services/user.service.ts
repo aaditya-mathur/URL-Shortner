@@ -1,8 +1,11 @@
 import { User, IUser } from "../models/models.index.js";
 
-export const findExistingUser = async (email: string): Promise<IUser | null > => {
+export const findExistingUser = async (email: string,username? : string): Promise<IUser | null > => {
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ $or : [
+      {email : email},
+      {username : username},
+    ] });
     return existingUser;
   } catch (error) {
     console.error(`Error occurred while searching for existing user ${error}`);
