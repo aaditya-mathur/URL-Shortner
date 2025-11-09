@@ -9,7 +9,7 @@ export const signUpPostRequestBodySchema = z.object({
                 .regex(/[a-z]/,"password must contain atleast one lowercase character")
                 .regex(/[0-9]/,"password must contain atleast one number")
                 .regex(/[^A-Za-z0-9]/, "password must contain at least one special character")
-})
+});
 
 export const loginPostRequestBodySchema = z.object({
     username : z.string().min(1,"username is required").optional(),
@@ -17,4 +17,9 @@ export const loginPostRequestBodySchema = z.object({
     password : z.string().min(1,"password is required"),
 }).refine((data) => data.email || data.username , {
     message : "either email or username is required"
+});
+
+export const shortenPostRequestBodySchema = z.object({
+    targetUrl : z.url().min(1,"target url is required"),
+    shortCode : z.string().optional(),
 })

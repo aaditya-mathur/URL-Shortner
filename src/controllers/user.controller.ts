@@ -56,7 +56,12 @@ export const login = asyncHandler( async (req : Request ,res : Response) => {
         throw new ApiError(401,"incorrect email or password");
     }
 
-    const token =  existingUser.generateAccessToken();
+    const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+    const accessToken =  existingUser.generateAccessToken();
     
-    return res.status(200).json(new ApiResponse(200,{ token },"logged in successfully"));
+    return res.status(200).cookie("accessToken",accessToken,options).json(new ApiResponse(200,{ accessToken },"logged in successfully"));
 })
