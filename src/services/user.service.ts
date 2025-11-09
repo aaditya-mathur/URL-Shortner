@@ -19,7 +19,8 @@ export const createUser = async (
   try {
     const newUser = new User({ name, username, email, password });
     await newUser.save();
-    return newUser;
+    const newUserToReturn = await User.findById(newUser._id).select("-password");
+    return newUserToReturn;
   } catch (error) {
     console.error(`Something went wrong while creating the user ${error}`);
     return null;
