@@ -22,4 +22,8 @@ export const loginPostRequestBodySchema = z.object({
 export const shortenPostRequestBodySchema = z.object({
     targetUrl : z.url().min(1,"target url is required"),
     shortCode : z.string().optional(),
+});
+
+export const updatePostRequestBodySchema = z.object({
+    targetUrl : z.url().min(1,"target url is required to update"),
 })

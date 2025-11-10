@@ -9,8 +9,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended : false}));
 
-app.use("/api/v1",userRouter);
-app.use("/api/v1",urlRouter);
+app.use("/api/v1/user" ,userRouter);
+app.use("/api/v1/url" ,urlRouter);
 
 
 app.use((err : any ,req : Request ,res : Response ,next : NextFunction) => {
