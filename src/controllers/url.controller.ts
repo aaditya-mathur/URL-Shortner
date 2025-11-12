@@ -92,4 +92,18 @@ export const getUrl = asyncHandler(async (req : any ,res : Response ) => {
     }
 
    return res.status(200).json(new ApiResponse(200,{ existingCode }));
+});
+
+export const redirectToUrl = asyncHandler(async (req : any ,res : Response) => {
+    const shortCode = req.params.shortCode;
+
+    const existingCode = await findExistingCode(shortCode);
+    if(!existingCode)
+    {
+        throw new ApiError(404,"url not found");
+    }
+    existingCode.clicks += 1;
+    await existingCode.save(); 
+    const codeToRedirect = existingCode.targetUrl; 
+    res.redirect(codeToRedirect);
 })
