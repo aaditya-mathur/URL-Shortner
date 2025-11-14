@@ -1,6 +1,7 @@
 import { User, IUser } from "../models/models.index.js";
 
-export const findExistingUser = async (email: string,username? : string): Promise<IUser | null > => {
+// TO FIND EXISTING USER
+export const findExistingUser = async (email : string,username? : string): Promise<IUser | null > => {
   try {
     const existingUser = await User.findOne({ $or : [
       {email : email},
@@ -13,6 +14,7 @@ export const findExistingUser = async (email: string,username? : string): Promis
   }
 };
 
+// FOR CREATING NEW USER
 export const createUser = async (
   name : string,
   username : string,
