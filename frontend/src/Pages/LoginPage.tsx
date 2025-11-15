@@ -1,86 +1,120 @@
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import { Link } from 'react-router-dom';
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("user logged in successfully");
+
+    try {
+      const isEmail = identifier.includes("@");
+
+      const payload = isEmail
+        ? { email: identifier, password }
+        : { username: identifier, password };
+
+      const { data } = await api.post("/user/login", payload);
+
+      localStorage.setItem("token", data.accessToken);
+
+      toast.success("Logged in successfully");
+      navigate("/dashboard");
+    } catch (err : any) {
+      toast.error(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 
-                    bg-gradient-to-b from-[#0c0d0f] to-[#121417]">
-      
-      <div className="max-w-md w-full 
-                      bg-[#181a1f]/70 backdrop-blur-xl
-                      rounded-xl p-10 shadow-2xl
-                      border border-[#2a2d34]/50">
-        
-        <h2 className="text-3xl font-light text-center mb-10 text-gray-200 tracking-wide">
+    <div className="min-h-screen w-full flex items-center justify-center px-6 bg-black">
+      <div
+        className="
+          w-full max-w-md
+          rounded-2xl
+          bg-black
+          border border-[#1a1a1a]
+          shadow-[0_0_40px_rgba(0,0,0,0.6)]
+          p-10
+        "
+      >
+        <h2 className="text-4xl font-semibold text-white tracking-tight mb-12">
           Login
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-white font-medium">
               Email or Username
             </label>
             <input
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 
-                         bg-[#0e0f11] text-gray-200 
-                         border border-[#2a2d34] rounded-lg 
-                         focus:ring-2 focus:ring-gray-500 focus:outline-none
-                         placeholder-gray-500"
-              placeholder="Enter email or username"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="you@example.com"
+              className="
+                w-full px-4 py-4
+                rounded-xl
+                bg-[#111]
+                border border-[#2a2a2a]
+                text-white
+                placeholder:text-[#6b6b6b]
+                focus:outline-none
+                focus:border-white
+                transition-all
+              "
               required
             />
           </div>
 
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">
-              Password
-            </label>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm text-white font-medium">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 
-                         bg-[#0e0f11] text-gray-200 
-                         border border-[#2a2d34] rounded-lg 
-                         focus:ring-2 focus:ring-gray-500 focus:outline-none
-                         placeholder-gray-500"
               placeholder="Enter password"
+              className="
+                w-full px-4 py-4
+                rounded-xl
+                bg-[#111]
+                border border-[#2a2a2a]
+                text-white
+                placeholder:text-[#6b6b6b]
+                focus:outline-none
+                focus:border-white
+                transition-all
+              "
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full py-2 rounded-lg 
-                       bg-gray-200 text-black 
-                       hover:bg-white transition"
+            className="
+              w-full py-4
+              rounded-xl
+              bg-white text-black
+              font-semibold text-base
+              hover:bg-[#f2f2f2]
+              transition-all
+            "
           >
             Login
           </button>
         </form>
 
-        <p className="text-center mt-6 text-gray-400">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-gray-200 hover:underline">
+        <p className="text-sm text-[#9a9a9a] mt-10">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-white underline">
             Sign up
           </Link>
         </p>
-
       </div>
     </div>
-
   );
 }

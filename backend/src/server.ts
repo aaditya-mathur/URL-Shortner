@@ -3,8 +3,17 @@ import userRouter from "./routes/user.route.js";
 import urlRouter from "./routes/url.route.js";
 import cookieParser from "cookie-parser";
 import { redirectToUrl } from "./controllers/url.controller.js";
+import cors from "cors";
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PATCH", "PUT", "OPTIONS", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
