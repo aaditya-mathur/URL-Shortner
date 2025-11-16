@@ -24,41 +24,51 @@ export default function DashboardPage() {
   }, []);
 
   const fetchUrls = async () => {
-  try {
-    setLoading(true);
-    const { data } = await api.get("/url/codes");
-    setUrls(data.data.allUrls || []);
-  } catch (err: any) {
-    toast.error("Failed to fetch URLs");
-    setUrls([]);
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      setLoading(true);
+      const { data } = await api.get("/url/codes");
+      setUrls(data.data.allUrls || []);
+    } catch (err: any) {
+      toast.error("Failed to fetch URLs");
+      setUrls([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleShorten = async () => {
     if (!targetUrl) return toast.error("Enter a URL");
-    
+
     try {
-      await api.post("/url/shorten", { 
-        targetUrl, 
-        shortCode: shortCode || undefined 
+      await api.post("/url/shorten", {
+        targetUrl,
+        shortCode: shortCode || undefined,
       });
       setTargetUrl("");
       setShortCode("");
       fetchUrls();
       toast.success("URL shortened!");
     } catch (err: any) {
-      toast.error(err.response?.data?.message || "Failed to shorten URL");
+      const status = err.response?.status;
+      const message = err.response?.data?.error || err.response?.data?.message;
+
+      if (status === 429) {
+        toast.error(message || "Too many URLs created. Try again later.", {
+          duration: 5000,
+          icon: "⏱️",
+        });
+      } else {
+        toast.error(message || "Failed to shorten URL");
+      }
     }
   };
 
   const handleUpdate = async () => {
     if (!editTarget || !selectedUrl) return;
-    
+
     try {
-      await api.patch(`/url/codes/${selectedUrl._id}`, { 
-        targetUrl: editTarget 
+      await api.patch(`/url/codes/${selectedUrl._id}`, {
+        targetUrl: editTarget,
       });
       setSelectedUrl(null);
       fetchUrls();
@@ -92,7 +102,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen w-full bg-black text-white flex flex-col">
-      
       <div className="flex justify-between items-center px-8 py-5 bg-[#111] border-b border-[#1a1a1a]">
         <h1 className="text-xl font-semibold">ShortURL</h1>
         <button
@@ -104,7 +113,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex-1 px-8 py-8 max-w-5xl mx-auto w-full">
-        
         <div className="mb-10">
           <h2 className="text-2xl font-semibold mb-6">Shorten a URL</h2>
           <div className="flex gap-3">
@@ -133,7 +141,7 @@ export default function DashboardPage() {
 
         <div>
           <h2 className="text-2xl font-semibold mb-6">Your URLs</h2>
-          
+
           {loading ? (
             <div className="text-center py-12 text-[#888]">Loading...</div>
           ) : urls.length === 0 ? (

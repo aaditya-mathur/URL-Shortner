@@ -7,10 +7,17 @@ import {
   getUrl,
   updateUrlEntry,
 } from "../controllers/url.controller";
+import rateLimit from "express-rate-limit";
 
 const router = express.Router();
 
-router.post("/shorten", verifyJwt, ensureAuthenticated, createUrl);
+const urlShortenLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many URLs created, please try again later.' }
+});
+
+router.post("/shorten", verifyJwt, ensureAuthenticated, urlShortenLimiter , createUrl);
 router.get("/codes", verifyJwt, ensureAuthenticated, getallUrlsByTheUser);
 router.delete(
   "/codes/:id",
