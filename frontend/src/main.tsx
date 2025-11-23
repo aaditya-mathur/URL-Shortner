@@ -9,24 +9,27 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <App />
-      <Toaster 
+      <Toaster
         position="top-right"
         toastOptions={{
+          duration: 3000,
           style: {
-            background: '#111',
+            background: '#27272a',
             color: '#fff',
-            border: '1px solid #2a2a2a',
+            border: '1px solid #3f3f46',
+            borderRadius: '12px',
+            padding: '16px',
           },
           success: {
             iconTheme: {
-              primary: '#fff',
-              secondary: '#111',
+              primary: '#10b981',
+              secondary: '#fff',
             },
           },
           error: {
             iconTheme: {
               primary: '#ef4444',
-              secondary: '#111',
+              secondary: '#fff',
             },
           },
         }}
